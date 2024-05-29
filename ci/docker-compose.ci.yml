@@ -14,19 +14,19 @@ services:
       POSTGRES_PASSWORD: lago
     ports:
       - 5432:5432
-    
+
   redis:
     image: redis:6.2-alpine
     container_name: lago_redis
     restart: unless-stopped
     ports:
       - 6379:6379
-  
+
   api:
     image: getlago/api:ci
     container_name: lago-api
     restart: unless-stopped
-    depends_on: 
+    depends_on:
       - "db"
     ports:
       - 3000:3000
@@ -47,6 +47,7 @@ services:
     restart: unless-stopped
     environment:
       API_URL: http://localhost:3000
+      REVENUE_API_URL: http://localhost:4002
       NODE_ENV: staging
     ports:
       - 80:80

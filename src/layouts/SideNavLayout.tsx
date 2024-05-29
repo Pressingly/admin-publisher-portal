@@ -47,10 +47,10 @@ import {
   PLAN_SUBSCRIPTION_DETAILS_ROUTE,
   PLANS_ROUTE,
   SETTINGS_ROUTE,
-  TAXES_SETTINGS_ROUTE,
+  TAXES_SETTINGS_ROUTE, TRANSACTIONS_ROUTE,
   WEBHOOK_LOGS_ROUTE,
   WEBHOOK_LOGS_TAB_ROUTE,
-  WEBHOOK_ROUTE,
+  WEBHOOK_ROUTE
 } from '~/core/router'
 import { useSideNavInfosQuery } from '~/generated/graphql'
 import { useInternationalization } from '~/hooks/core/useInternationalization'
@@ -267,6 +267,12 @@ const SideNav = () => {
                     icon: 'document',
                     link: INVOICES_ROUTE,
                     match: [INVOICES_ROUTE, INVOICES_TAB_ROUTE],
+                  },
+                  {
+                    title: translate('text_63ac86de97f728a87b2f9f85'),
+                    icon: 'document',
+                    link: TRANSACTIONS_ROUTE,
+                    match: [TRANSACTIONS_ROUTE],
                   },
                 ]}
                 orientation="vertical"

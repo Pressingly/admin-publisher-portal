@@ -16,6 +16,7 @@ const AddOnsList = lazyLoad(
 const InvoicesList = lazyLoad(
   () => import(/* webpackChunkName: 'invoices-list' */ '~/pages/InvoicesList'),
 )
+const TransactionsList = lazyLoad(() => import(/* webpackChunkName: 'plans-list' */ '~/pages/TransactionsList'))
 
 // Creation
 const CreateBillableMetric = lazyLoad(
@@ -60,6 +61,7 @@ export const COUPONS_ROUTE = '/coupons'
 export const ADD_ONS_ROUTE = '/add-ons'
 export const INVOICES_ROUTE = '/invoices'
 export const INVOICES_TAB_ROUTE = '/invoices/:tab'
+export const TRANSACTIONS_ROUTE = '/transactions'
 
 // Creation
 export const CREATE_BILLABLE_METRIC_ROUTE = '/create/billable-metrics'
@@ -121,6 +123,11 @@ export const objectListRoutes: CustomRouteObject[] = [
     path: [INVOICES_ROUTE, INVOICES_TAB_ROUTE],
     private: true,
     element: <InvoicesList />,
+  },
+  {
+    path: [TRANSACTIONS_ROUTE],
+    private: true,
+    element: <TransactionsList />,
   },
 ]
 

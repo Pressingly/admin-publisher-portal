@@ -55,6 +55,7 @@ module.exports = {
   globals: {
     APP_ENV: 'production',
     API_URL: 'http://localhost:3000',
+    REVENUE_API_URL: 'http://localhost:4002',
     APP_VERSION: '1.0.0',
     IS_REACT_ACT_ENVIRONMENT: true,
     LAGO_OAUTH_PROXY_URL: 'https://proxy.lago.dev',
