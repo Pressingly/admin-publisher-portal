@@ -8,7 +8,10 @@ RUN apk add python3 build-base
 RUN yarn && yarn build && npm prune --production
 
 FROM nginx:1.25-alpine
-
+ARG API_URL
+ARG APP_ENV
+ENV APP_ENV="production"
+ENV API_URL=""
 WORKDIR /usr/share/nginx/html
 
 RUN apk add --no-cache bash
