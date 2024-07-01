@@ -1,5 +1,5 @@
 FROM node:20-alpine as build
-
+FROM public.ecr.aws/docker/library/node:20-alpine3.18 as build
 WORKDIR /app
 
 COPY . .
@@ -7,7 +7,7 @@ COPY . .
 RUN apk add python3 build-base
 RUN yarn && yarn build && npm prune --production
 
-FROM nginx:1.25-alpine
+FROM public.ecr.aws/nginx/nginx:stable-perl
 ARG API_URL
 ARG APP_ENV
 ENV APP_ENV=${APP_ENV}
