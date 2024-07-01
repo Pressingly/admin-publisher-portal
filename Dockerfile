@@ -7,7 +7,7 @@ COPY . .
 RUN apk add python3 build-base
 RUN yarn && yarn build && npm prune --production
 
-FROM public.ecr.aws/nginx/nginx:stable-perl
+FROM public.ecr.aws/nginx/nginx:stable-alpine3.19-slim
 ARG API_URL
 ARG APP_ENV
 ENV APP_ENV=${APP_ENV}
