@@ -22,6 +22,8 @@ COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY ./nginx/gzip.conf /etc/nginx/conf.d/gzip.conf
 COPY ./.env.sh ./.env.sh
 
+USER nginx
+
 EXPOSE 80
 
 ENTRYPOINT ["/bin/bash", "-c", "./.env.sh && nginx -g \"daemon off;\""]
