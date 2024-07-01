@@ -10,8 +10,8 @@ RUN yarn && yarn build && npm prune --production
 FROM nginx:1.25-alpine
 ARG API_URL
 ARG APP_ENV
-ENV APP_ENV="production"
-ENV API_URL=""
+ENV APP_ENV=${APP_ENV}
+ENV API_URL=${API_URL}
 WORKDIR /usr/share/nginx/html
 
 RUN apk add --no-cache bash
