@@ -20,7 +20,7 @@ RUN apk update && apk upgrade libx11 nghttp2 openssl tiff
 COPY --from=build /app/dist .
 COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY ./nginx/gzip.conf /etc/nginx/conf.d/gzip.conf
-COPY ./.env.sh ./.env.sh
+#COPY ./.env.sh ./.env.sh
 
 USER nginx
 
