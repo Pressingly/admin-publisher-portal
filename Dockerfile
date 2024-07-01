@@ -26,4 +26,4 @@ USER nginx
 
 EXPOSE 80
 
-ENTRYPOINT ["/bin/bash", "-c", "./.env.sh && nginx -g \"daemon off;\""]
+ENTRYPOINT ["nginx -g \"daemon off;\""]
