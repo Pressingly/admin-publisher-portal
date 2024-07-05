@@ -288,7 +288,7 @@ const ReceivablesDashboard = () => {
       {subscriptionCharges.length === 0 ? (
         <NoTransaction>No transaction available</NoTransaction>
       ) : (
-        <PaginationFooter {...page} setPage={setPage} />
+        <PaginationFooter {...page} setPage={setPage} currPageCount={subscriptionCharges.length}/>
       )}
     </DashboardContainer>
   )

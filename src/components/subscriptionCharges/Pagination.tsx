@@ -10,15 +10,17 @@ interface Page {
 
 interface PaginationFooterProps extends Page {
   setPage: Dispatch<SetStateAction<Page>>
+  currPageCount: number
 }
 
 export default function PaginationFooter({
   totalItem,
   currentPage,
+  currPageCount,
   setPage,
 }: PaginationFooterProps) {
   const startIdx = Number(currentPage) * ITEMS_PER_PAGE + 1
-  const endIdx = startIdx + 19
+  const endIdx = currPageCount < ITEMS_PER_PAGE ? startIdx + currPageCount - 1 : startIdx + 19
 
   function handlePreviousPage() {
     if (Number(currentPage) === 0) return
