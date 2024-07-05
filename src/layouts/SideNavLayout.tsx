@@ -47,6 +47,7 @@ import {
   PLAN_SUBSCRIPTION_DETAILS_ROUTE,
   PLANS_ROUTE,
   SETTINGS_ROUTE,
+  SUBSCRIPTION_CHARGE_ROUTE,
   TAXES_SETTINGS_ROUTE,
   WEBHOOK_LOGS_ROUTE,
   WEBHOOK_LOGS_TAB_ROUTE,
@@ -248,6 +249,11 @@ const SideNav = () => {
                     title: translate('text_62865498824cc10126ab2940'),
                     icon: 'coupon',
                     link: COUPONS_ROUTE,
+                  },
+                  {
+                    title: 'Subscription charges',
+                    icon: 'wallet',
+                    link: SUBSCRIPTION_CHARGE_ROUTE,
                   },
                   {
                     title: translate('text_624efab67eb2570101d117a5'),

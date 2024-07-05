@@ -120,6 +120,7 @@
     "recharts": "^2.9.0",
     "sanitize-html": "2.12.1",
     "styled-components": "5.3.11",
+    "uuid": "^10.0.0",
     "yarn": "1.22.19",
     "yup": "1.2.0"
   },
