@@ -1,14 +1,22 @@
-import { useState } from 'react'
+import get from 'lodash/get'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { MembershipOrgView } from './interfaces'
+import { envGlobalVar } from '~/core/apolloClient'
+import { ITEMS_PER_PAGE } from '~/core/constants/pagination'
+import { fetchMemberships } from '~/core/utils/request'
+
+import { MembershipOrg, MembershipOrgView, PaginationValue } from './interfaces'
 import { MembershipUsersList } from './MembershipUsersList'
+import PaginationFooter from './Pagination'
 import Summaries from './Summaries'
 
 import { Icon } from '../designSystem'
 
-interface MembershipOrgsListProps {
-  membershipOrgsData: MembershipOrgView[]
+const { publisherRevenueApiUrl } = envGlobalVar()
+
+const membershipNameMap: Record<string, string> = {
+  '439db5bd-e607-4689-ad1d-6614a21927da': 'United Airlines',
 }
 
 const summaryData = [
@@ -19,131 +27,6 @@ const summaryData = [
   { title: 'Paid amount', value: '$0.00' },
   { title: 'Unpaid amount', value: '$0.00' },
 ]
-
-const mockPaymentData = [
-  {
-    id: '123',
-    customer: 'John Doe',
-    totalAmount: 'US$5.00',
-    interchangeFee: 'US$0.50',
-    receivables: 'US$4.50',
-    paidAmount: '-',
-    unpaidAmount: '-',
-    inDispute: '-',
-    paymentStatus: 'Pending',
-    paymentDate: '-',
-  },
-  {
-    id: '124',
-    customer: 'Michael Johnson',
-    totalAmount: 'US$10.00',
-    interchangeFee: 'US$1.00',
-    receivables: 'US$9.00',
-    paidAmount: '-',
-    unpaidAmount: '-',
-    inDispute: '-',
-    paymentStatus: 'Pending',
-    paymentDate: '-',
-  },
-  {
-    id: '125',
-    customer: 'Emma Williams',
-    totalAmount: 'US$10.00',
-    interchangeFee: 'US$1.00',
-    receivables: 'US$9.00',
-    paidAmount: '-',
-    unpaidAmount: '-',
-    inDispute: '-',
-    paymentStatus: 'Pending',
-    paymentDate: '-',
-  },
-  {
-    id: '126',
-    customer: 'Daniel Brown',
-    totalAmount: 'US$10.00',
-    interchangeFee: 'US$1.00',
-    receivables: 'US$9.00',
-    paidAmount: '-',
-    unpaidAmount: '-',
-    inDispute: '-',
-    paymentStatus: 'Pending',
-    paymentDate: '-',
-  },
-  {
-    id: '127',
-    customer: 'Olivia Smith',
-    totalAmount: 'US$10.00',
-    interchangeFee: 'US$1.00',
-    receivables: 'US$9.00',
-    paidAmount: '-',
-    unpaidAmount: '-',
-    inDispute: '-',
-    paymentStatus: 'Pending',
-    paymentDate: '-',
-  },
-  {
-    id: '128',
-    customer: 'James Davis',
-    totalAmount: 'US$5.00',
-    interchangeFee: 'US$0.50',
-    receivables: 'US$4.50',
-    paidAmount: '-',
-    unpaidAmount: '-',
-    inDispute: '-',
-    paymentStatus: 'Pending',
-    paymentDate: '-',
-  },
-  {
-    id: '129',
-    customer: 'Sophia Miller',
-    totalAmount: 'US$10.00',
-    interchangeFee: 'US$1.00',
-    receivables: 'US$9.00',
-    paidAmount: '-',
-    unpaidAmount: '-',
-    inDispute: '-',
-    paymentStatus: 'Pending',
-    paymentDate: '-',
-  },
-  {
-    id: '130',
-    customer: 'Ethan Wilson',
-    totalAmount: 'US$10.00',
-    interchangeFee: 'US$1.00',
-    receivables: 'US$9.00',
-    paidAmount: '-',
-    unpaidAmount: '-',
-    inDispute: '-',
-    paymentStatus: 'Pending',
-    paymentDate: '-',
-  },
-  {
-    id: '131',
-    customer: 'Isabella Garcia',
-    totalAmount: 'US$10.00',
-    interchangeFee: 'US$1.00',
-    receivables: 'US$9.00',
-    paidAmount: '-',
-    unpaidAmount: '-',
-    inDispute: '-',
-    paymentStatus: 'Pending',
-    paymentDate: '-',
-  },
-  {
-    id: '132',
-    customer: 'Alex Martinez',
-    totalAmount: 'US$10.00',
-    interchangeFee: 'US$1.00',
-    receivables: 'US$9.00',
-    paidAmount: '-',
-    unpaidAmount: '-',
-    inDispute: '-',
-    paymentStatus: 'Pending',
-    paymentDate: '-',
-  },
-]
-
-export default mockPaymentData
 
 const Table = styled.table`
   width: 100%;
@@ -197,8 +80,69 @@ const Period = styled.p`
   margin-bottom: 20px;
 `
 
-export function MembershipOrgsList({ membershipOrgsData }: MembershipOrgsListProps) {
+const NoTransaction = styled.div`
+  margin-top: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: #000000;
+`
+
+export function MembershipOrgsList() {
+  const [memberships, setMemberships] = useState<MembershipOrg[]>([])
   const [selectedMembership, setSelectedMembership] = useState<MembershipOrgView | null>(null)
+  const [page, setPage] = useState<PaginationValue>({ currentPage: '0', totalItem: 0 })
+  const urlText = `${publisherRevenueApiUrl.toString()}subscription-charges/memberships`
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const response = await fetchMemberships(urlText)
+
+        const memData = get(response, 'data.list', [])
+        const curTotalItem = get(response, 'data.total', 0) as number
+
+        setPage((prev) => ({ ...prev, totalItem: curTotalItem }))
+        setMemberships(memData)
+      } catch (error) {
+        console.error('Failed to fetch membership orgs:', error) // eslint-disable-line no-console
+      }
+    })()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const response = await fetchMemberships(urlText, page.currentPage)
+
+        const memData = get(response, 'data.list', [])
+        const curTotalItem = get(response, 'data.total', 0) as number
+
+        setPage((prev) => ({ ...prev, totalItem: curTotalItem }))
+        setMemberships(memData)
+      } catch (error) {
+        console.error('Failed to fetch membership orgs:', error) // eslint-disable-line no-console
+      }
+    })()
+  }, [page.currentPage]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const membershipOrgsData = memberships.map((mem) => {
+    const name = membershipNameMap[mem.membershipOrgId] || 'Unknown'
+    const total = `$${mem.totalAmount}`
+
+    return {
+      id: mem.membershipOrgId,
+      org: name,
+      total,
+      interchange: '-',
+      receivables: '-',
+      paid: '-',
+      unpaid: '-',
+      inDispute: '-',
+      status: '-',
+      paymentDate: '-',
+    }
+  })
 
   if (!selectedMembership) {
     return (
@@ -244,14 +188,16 @@ export function MembershipOrgsList({ membershipOrgsData }: MembershipOrgsListPro
             ))}
           </tbody>
         </Table>
-        {/* {subscriptionCharges.length === 0 ? (
-        <NoTransaction>No transaction available</NoTransaction>
-      ) : (
-        <PaginationFooter {...page} setPage={setPage} currPageCount={subscriptionCharges.length} />
-      )} */}
+        {memberships.length === 0 ? (
+          <NoTransaction>No memberships available</NoTransaction>
+        ) : (
+          page.totalItem > ITEMS_PER_PAGE && (
+            <PaginationFooter {...page} setPage={setPage} currPageCount={memberships.length} />
+          )
+        )}
       </section>
     )
   }
 
-  return <MembershipUsersList membershipUsersData={mockPaymentData} selectedMembership={selectedMembership}/>
+  return <MembershipUsersList selectedMembership={selectedMembership} />
 }

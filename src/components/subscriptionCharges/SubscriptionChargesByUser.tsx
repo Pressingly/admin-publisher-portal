@@ -1,13 +1,33 @@
+import get from 'lodash/get'
+import { DateTime } from 'luxon'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { MembershipUserView, SubscriptionChargesView } from './interfaces'
+import { envGlobalVar } from '~/core/apolloClient'
+import { fetchSubChargesByUser } from '~/core/utils/request'
+
+import {
+  MembershipOrgView,
+  MembershipUserView,
+  PaginationValue,
+  SubscriptionCharge,
+} from './interfaces'
+import PaginationFooter from './Pagination'
 import Summaries from './Summaries'
 
 import { Icon } from '../designSystem'
+import { ITEMS_PER_PAGE } from '~/core/constants/pagination'
 
 interface SubscriptionChargesByUserProps {
-  subscriptionChargesData: SubscriptionChargesView[]
   selectedUser: MembershipUserView
+  selectedMembership: MembershipOrgView
+}
+const { publisherRevenueApiUrl } = envGlobalVar()
+
+function formatDate(isoString: string) {
+  const dateTime = DateTime.fromISO(isoString)
+
+  return dateTime.toFormat('dd LLL, HH:mm')
 }
 
 const Table = styled.table`
@@ -36,7 +56,7 @@ const Td = styled.td`
 `
 const DetailHeader = styled.div`
   display: flex;
-  padding: 16px;
+  padding: 16px 0;
   justify-content: space-between;
   align-items: center;
   align-self: stretch;
@@ -46,7 +66,7 @@ const Detail = styled.div`
   font-size: 16px;
   color: #111928;
   font-weight: 600;
-  margin: 10px;
+  margin: 10px 0;
 `
 
 const FilterContainter = styled.button`
@@ -68,6 +88,13 @@ const Title = styled.h1`
 const Period = styled.p`
   margin-bottom: 20px;
 `
+const NoTransaction = styled.div`
+  margin-top: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: #000000;
+`
 
 const summaryData = [
   { title: 'Total amount', value: '$220.00' },
@@ -78,13 +105,76 @@ const summaryData = [
   { title: 'Unpaid amount', value: '$0.00' },
 ]
 
+const currencyMap: Record<string, string> = {
+  USD: '$',
+}
+
 export function SubscriptionChargesByUser({
-  subscriptionChargesData,
   selectedUser,
+  selectedMembership,
 }: SubscriptionChargesByUserProps) {
+  const [subCharges, setSubCharges] = useState<SubscriptionCharge[]>([])
+  const [page, setPage] = useState<PaginationValue>({ currentPage: '0', totalItem: 0 })
+  const urlText = `${publisherRevenueApiUrl.toString()}subscription-charges/memberships/${
+    selectedMembership.id
+  }/users/${selectedUser.id}`
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const response = await fetchSubChargesByUser(urlText)
+
+        const memUserData = get(response, 'data.list', [])
+        const curTotalItem = get(response, 'data.total', 0) as number
+
+        setPage((prev) => ({ ...prev, totalItem: curTotalItem }))
+        setSubCharges(memUserData)
+      } catch (error) {
+        console.error('Failed to fetch subscription charges:', error) // eslint-disable-line no-console
+      }
+    })()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const response = await fetchSubChargesByUser(urlText, page.currentPage)
+
+        const memUserData = get(response, 'data.list', [])
+        const curTotalItem = get(response, 'data.total', 0) as number
+
+        setPage((prev) => ({ ...prev, totalItem: curTotalItem }))
+        setSubCharges(memUserData)
+      } catch (error) {
+        console.error('Failed to fetch membership orgs:', error) // eslint-disable-line no-console
+      }
+    })()
+  }, [page.currentPage]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const subscriptionChargesData = subCharges.map((subCharge) => {
+    const scId = subCharge.id
+    const currency = currencyMap[subCharge.currencyCode]
+    const amount = `${currency}${subCharge.amount}`
+
+    return {
+      scId,
+      description: subCharge.description,
+      amount,
+      interchangeFee: '-',
+      receivables: '-',
+      paidAmount: '-',
+      unpaidAmount: '-',
+      inDispute: '-',
+      subscriptionChargeStatus: '-',
+      createdDate: formatDate(subCharge.createdAt),
+      updatedDate: formatDate(subCharge.updatedAt),
+      paymentDate: '-',
+    }
+  })
+
   return (
     <section>
-      <Title>{selectedUser.customer}</Title>
+      <Title>{selectedUser.id}</Title>
       <Period>Period 01/08/2023 - 31/08/2023</Period>
       <Summaries summaryData={summaryData} />
       <DetailHeader>
@@ -130,11 +220,13 @@ export function SubscriptionChargesByUser({
           ))}
         </tbody>
       </Table>
-      {/* {subscriptionCharges.length === 0 ? (
+      {subCharges.length === 0 ? (
         <NoTransaction>No transaction available</NoTransaction>
       ) : (
-        <PaginationFooter {...page} setPage={setPage} currPageCount={subscriptionCharges.length} />
-      )} */}
+        page.totalItem > ITEMS_PER_PAGE && (
+          <PaginationFooter {...page} setPage={setPage} currPageCount={subCharges.length} />
+        )
+      )}
     </section>
   )
 }

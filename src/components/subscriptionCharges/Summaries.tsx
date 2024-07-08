@@ -1,5 +1,14 @@
 import styled from "styled-components"
 
+interface SummariesProps {
+  summaryData: Summary[]
+}
+
+interface Summary {
+  title: string
+  value: string
+}
+
 const SummaryContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -27,7 +36,7 @@ const CardValue = styled.p`
   margin: 0;
 `
 
-export default function Summaries({ summaryData }) {
+export default function Summaries({ summaryData }: SummariesProps) {
   return (
     <SummaryContainer>
       {summaryData.map((item, index) => (

@@ -1,14 +1,26 @@
-import { useState } from 'react'
+import get from 'lodash/get'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { MembershipOrgView, MembershipUserView } from './interfaces'
+import { envGlobalVar } from '~/core/apolloClient'
+import { ITEMS_PER_PAGE } from '~/core/constants/pagination'
+import { fetchMembershipCustomers } from '~/core/utils/request'
+
+import {
+  MembershipOrgView,
+  MembershipUser,
+  MembershipUserView,
+  PaginationValue,
+} from './interfaces'
+import PaginationFooter from './Pagination'
 import { SubscriptionChargesByUser } from './SubscriptionChargesByUser'
 import Summaries from './Summaries'
 
 import { Icon } from '../designSystem'
 
+const { publisherRevenueApiUrl } = envGlobalVar()
+
 interface MembershipUsersListProps {
-  membershipUsersData: MembershipUserView[]
   selectedMembership: MembershipOrgView
 }
 
@@ -70,22 +82,13 @@ const Period = styled.p`
   margin-bottom: 20px;
 `
 
-const mockSubscriptionChargesData = [
-  {
-    scId: '123',
-    description: 'Monthly subscription - Aug 24',
-    amount: 'US$5.00',
-    interchangeFee: 'US$0.50',
-    receivables: 'US$4.50',
-    paidAmount: '-',
-    unpaidAmount: '-',
-    inDispute: '-',
-    subscriptionChargeStatus: 'Not finalized',
-    createdDate: '26 Dec, 10:56',
-    updatedDate: '26 Dec, 10:56',
-    paymentDate: '-',
-  },
-]
+const NoTransaction = styled.div`
+  margin-top: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  color: #000000;
+`
 
 const summaryData = [
   { title: 'Total amount', value: '$220.00' },
@@ -96,11 +99,64 @@ const summaryData = [
   { title: 'Unpaid amount', value: '$0.00' },
 ]
 
-export function MembershipUsersList({
-  membershipUsersData,
-  selectedMembership,
-}: MembershipUsersListProps) {
+export function MembershipUsersList({ selectedMembership }: MembershipUsersListProps) {
+  const [memUsers, setMemUsers] = useState<MembershipUser[]>([])
   const [selectedUser, setSelectedUser] = useState<MembershipUserView | null>(null)
+  const [page, setPage] = useState<PaginationValue>({ currentPage: '0', totalItem: 0 })
+  const urlText = `${publisherRevenueApiUrl.toString()}subscription-charges/memberships/${
+    selectedMembership.id
+  }/users`
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const response = await fetchMembershipCustomers(urlText)
+
+        const memUserData = get(response, 'data.list', [])
+        const curTotalItem = get(response, 'data.total', 0) as number
+
+        setPage((prev) => ({ ...prev, totalItem: curTotalItem }))
+        setMemUsers(memUserData)
+      } catch (error) {
+        console.error('Failed to fetch user list:', error) // eslint-disable-line no-console
+      }
+    })()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const response = await fetchMembershipCustomers(urlText, page.currentPage)
+
+        const memUserData = get(response, 'data.list', [])
+        const curTotalItem = get(response, 'data.total', 0) as number
+
+        setPage((prev) => ({ ...prev, totalItem: curTotalItem }))
+        setMemUsers(memUserData)
+      } catch (error) {
+        console.error('Failed to fetch user list:', error) // eslint-disable-line no-console
+      }
+    })()
+  }, [page.currentPage]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const membershipUsersData = memUsers.map((memUser) => {
+    const id = memUser.membershipUserId
+    const totalAmount = `$${memUser.totalAmount}`
+
+    return {
+      id,
+      customer: '-',
+      totalAmount,
+      interchangeFee: '-',
+      receivables: '-',
+      paidAmount: '-',
+      unpaidAmount: '-',
+      inDispute: '-',
+      status: '-',
+      paymentStatus: '-',
+      paymentDate: '-',
+    }
+  })
 
   if (!selectedUser) {
     return (
@@ -147,14 +203,16 @@ export function MembershipUsersList({
             ))}
           </tbody>
         </Table>
-        {/* {subscriptionCharges.length === 0 ? (
-        <NoTransaction>No transaction available</NoTransaction>
-      ) : (
-        <PaginationFooter {...page} setPage={setPage} currPageCount={subscriptionCharges.length} />
-      )} */}
+        {memUsers.length === 0 ? (
+          <NoTransaction>No transaction available</NoTransaction>
+        ) : (
+          page.totalItem > ITEMS_PER_PAGE && (
+            <PaginationFooter {...page} setPage={setPage} currPageCount={memUsers.length} />
+          )
+        )}
       </section>
     )
   }
 
-  return <SubscriptionChargesByUser subscriptionChargesData={mockSubscriptionChargesData} selectedUser={selectedUser}/>
+  return <SubscriptionChargesByUser selectedUser={selectedUser} selectedMembership={selectedMembership}/>
 }

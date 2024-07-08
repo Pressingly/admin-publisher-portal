@@ -1,3 +1,27 @@
+export interface SubscriptionCharge {
+  createdAt: string
+  updatedAt: string
+  id: string
+  membershipOrgId: string
+  membershipUserId: string
+  subscriptionInstanceId: string
+  amount: number
+  currencyCode: string
+  status: string
+  description: string
+}
+export interface MembershipUser {
+  membershipUserId: string
+  totalAmount: number
+}
+export interface PaginationValue {
+  currentPage: string
+  totalItem: number
+}
+export interface MembershipOrg {
+  membershipOrgId: string
+  totalAmount: number
+}
 export interface SubscriptionChargesView {
   scId: string
   description: string

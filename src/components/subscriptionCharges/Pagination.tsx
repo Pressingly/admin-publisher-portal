@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react'
 import styled from 'styled-components'
 
-const ITEMS_PER_PAGE = 20
+import { ITEMS_PER_PAGE } from '~/core/constants/pagination'
 
 interface Page {
   totalItem: number

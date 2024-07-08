@@ -1,3 +1,66 @@
+export async function fetchSubChargesByUser(urlText: string, page: string = '0') {
+  const url = new URL(urlText)
+
+  // Set query parameters
+  url.searchParams.append('page', page)
+
+  try {
+    const response = await fetch(url.toString())
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    return data
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function fetchMembershipCustomers(urlText: string, page: string = '0') {
+  const url = new URL(urlText)
+
+  // Set query parameters
+  url.searchParams.append('page', page)
+
+  try {
+    const response = await fetch(url.toString())
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    return data
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function fetchMemberships(urlText: string, page: string = '0') {
+  const url = new URL(urlText)
+
+  // Set query parameters
+  url.searchParams.append('page', page)
+
+  try {
+    const response = await fetch(url.toString())
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    return data
+  } catch (error) {
+    throw error
+  }
+}
+
 export async function fetchSubscriptionCharges(urlText: string, page: string = '0') {
   const url = new URL(urlText)
 
