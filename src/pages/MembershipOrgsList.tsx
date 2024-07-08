@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { Icon } from '~/components/designSystem'
-import PaginationFooter from '~/components/subscriptionCharges/Pagination'
+// import PaginationFooter from '~/components/subscriptionCharges/Pagination'
 import { envGlobalVar } from '~/core/apolloClient'
 import { fetchSubscriptionCharges } from '~/core/utils/request'
 
@@ -22,18 +22,18 @@ interface SubscriptionCharge {
   updatedAt: string
 }
 
-interface SubscriptionChargeView {
-  id: string
-  org: string
-  total: string
-  interchange: string
-  receivables: string
-  paid: string
-  unpaid: string
-  inDispute: string
-  status: string
-  paymentDate: string
-}
+// interface SubscriptionChargeView {
+//   id: string
+//   org: string
+//   total: string
+//   interchange: string
+//   receivables: string
+//   paid: string
+//   unpaid: string
+//   inDispute: string
+//   status: string
+//   paymentDate: string
+// }
 
 const DashboardContainer = styled.div`
   font-family: Arial, sans-serif;
@@ -137,34 +137,34 @@ const Td = styled.td`
   padding: 10px;
   border-bottom: 1px solid #ddd;
 `
-const NoTransaction = styled.div`
-  margin-top: 50px;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  color: #000000;
-`
+// const NoTransaction = styled.div`
+//   margin-top: 50px;
+//   font-size: 14px;
+//   font-weight: 600;
+//   text-align: center;
+//   color: #000000;
+// `
 
-const statusMap: Record<string, string> = {
-  inProgress: 'Pending',
-  paid: 'Paid',
-  unpaid: 'Unpaid',
-}
+// const statusMap: Record<string, string> = {
+//   inProgress: 'Pending',
+//   paid: 'Paid',
+//   unpaid: 'Unpaid',
+// }
 
-const membershipNameMap: Record<string, string> = {
-  '439db5bd-e607-4689-ad1d-6614a21927da': 'United Airlines',
-}
+// const membershipNameMap: Record<string, string> = {
+//   '439db5bd-e607-4689-ad1d-6614a21927da': 'United Airlines',
+// }
 
-const currencyMap: Record<string, string> = {
-  USD: '$',
-}
+// const currencyMap: Record<string, string> = {
+//   USD: '$',
+// }
 
 interface PaginationValue {
   currentPage: string
   totalItem: number
 }
 
-const ReceivablesDashboard = () => {
+const MembershipOrgList = () => {
   const [subscriptionCharges, setSubscriptionCharges] = useState<SubscriptionCharge[]>([])
   const [page, setPage] = useState<PaginationValue>({ currentPage: '0', totalItem: 0 })
   const urlText = `${publisherRevenueApiUrl.toString()}subscription-charges`
@@ -209,27 +209,42 @@ const ReceivablesDashboard = () => {
     { title: 'Paid amount', value: '$0.00' },
     { title: 'Unpaid amount', value: '$0.00' },
   ]
-  const detailsData: SubscriptionChargeView[] = subscriptionCharges.map((item) => {
-    const { id, membershipOrgId, amount, currencyCode, status } = item
+  // const detailsData: SubscriptionChargeView[] = subscriptionCharges.map((item) => {
+  //   const { id, membershipOrgId, amount, currencyCode, status } = item
 
-    const total = `${currencyMap[currencyCode]}${amount}`
-    const receivables = status === 'inProgress' ? total : '-'
-    const stt = statusMap[status] || '-'
-    const membershipName = membershipNameMap[membershipOrgId] || '-'
+  //   const total = `${currencyMap[currencyCode]}${amount}`
+  //   const receivables = status === 'inProgress' ? total : '-'
+  //   const stt = statusMap[status] || '-'
+  //   const membershipName = membershipNameMap[membershipOrgId] || '-'
 
-    return {
-      id,
-      org: membershipName,
-      total,
+  //   return {
+  //     id,
+  //     org: membershipName,
+  //     total,
+  //     interchange: '-',
+  //     receivables,
+  //     paid: '-',
+  //     unpaid: '-',
+  //     inDispute: '-',
+  //     status: stt,
+  //     paymentDate: '-',
+  //   }
+  // })
+
+  const detailsData = [
+    {
+      id: '439db5bd-e607-4689-ad1d-6614a21927da',
+      org: 'United Airlines',
+      total: '-',
       interchange: '-',
-      receivables,
+      receivables: '-',
       paid: '-',
       unpaid: '-',
       inDispute: '-',
-      status: stt,
+      status: '-',
       paymentDate: '-',
-    }
-  })
+    },
+  ]
 
   return (
     <DashboardContainer>
@@ -285,13 +300,13 @@ const ReceivablesDashboard = () => {
           ))}
         </tbody>
       </Table>
-      {subscriptionCharges.length === 0 ? (
+      {/* {subscriptionCharges.length === 0 ? (
         <NoTransaction>No transaction available</NoTransaction>
       ) : (
-        <PaginationFooter {...page} setPage={setPage} currPageCount={subscriptionCharges.length}/>
-      )}
+        <PaginationFooter {...page} setPage={setPage} currPageCount={subscriptionCharges.length} />
+      )} */}
     </DashboardContainer>
   )
 }
 
-export default ReceivablesDashboard
+export default MembershipOrgList
