@@ -220,6 +220,7 @@ export function SubscriptionChargesByUser({
         </BreadcrumbContainer>
         <SearchBar placeholder="Search..." />
       </Header>
+      <Title>{selectedUser.id}</Title>
       <Period>Period 01/08/2023 - 31/08/2023</Period>
       <Summaries summaryData={summaryData} />
       <DetailHeader>
