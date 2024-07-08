@@ -16,7 +16,7 @@ import {
 import PaginationFooter from './Pagination'
 import Summaries from './Summaries'
 
-import { Icon } from '../designSystem'
+import { Icon, Tooltip } from '../designSystem'
 
 interface SubscriptionChargesByUserProps {
   selectedUser: MembershipUserView
@@ -196,6 +196,7 @@ export function SubscriptionChargesByUser({
 
     return {
       scId,
+      shortScId: scId.substring(0, 3) + '...',
       description: subCharge.description,
       amount,
       interchangeFee: '-',
@@ -216,7 +217,9 @@ export function SubscriptionChargesByUser({
         <BreadcrumbContainer>
           <BreadcrumbItem onClick={() => setSelectedMembership(null)}>Receivables</BreadcrumbItem>
           <Separator>&gt;</Separator>
-          <BreadcrumbItem onClick={() => setSelectedUser(null)}>{selectedMembership.org}</BreadcrumbItem>
+          <BreadcrumbItem onClick={() => setSelectedUser(null)}>
+            {selectedMembership.org}
+          </BreadcrumbItem>
         </BreadcrumbContainer>
         <SearchBar placeholder="Search..." />
       </Header>
@@ -250,7 +253,11 @@ export function SubscriptionChargesByUser({
         <tbody>
           {subscriptionChargesData.map((item) => (
             <Tr key={item.scId}>
-              <Td>{item.scId}</Td>
+              <Td>
+                <Tooltip placement="top" title={item.scId}>
+                  {item.shortScId}
+                </Tooltip>
+              </Td>
               <Td>{item.description}</Td>
               <Td>{item.amount}</Td>
               <Td>{item.interchangeFee}</Td>

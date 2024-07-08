@@ -11,7 +11,7 @@ import { MembershipUsersList } from './MembershipUsersList'
 import PaginationFooter from './Pagination'
 import Summaries from './Summaries'
 
-import { Icon } from '../designSystem'
+import { Button, Icon, Tooltip } from '../designSystem'
 
 const { publisherRevenueApiUrl } = envGlobalVar()
 
@@ -151,6 +151,7 @@ export function MembershipOrgsList() {
 
     return {
       id: mem.membershipOrgId,
+      shortId: mem.membershipOrgId.substring(0, 3) + '...',
       org: name,
       total,
       interchange: '-',
@@ -197,7 +198,11 @@ export function MembershipOrgsList() {
           <tbody>
             {membershipOrgsData.map((item) => (
               <Tr key={item.id} onClick={() => setSelectedMembership(item)}>
-                <Td>{item.id}</Td>
+                <Td>
+                  <Tooltip placement="top" title={item.id}>
+                    {item.shortId}
+                  </Tooltip>
+                </Td>
                 <Td>{item.org}</Td>
                 <Td>{item.total}</Td>
                 <Td>{item.interchange}</Td>

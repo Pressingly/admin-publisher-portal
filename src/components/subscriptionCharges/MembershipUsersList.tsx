@@ -16,7 +16,7 @@ import PaginationFooter from './Pagination'
 import { SubscriptionChargesByUser } from './SubscriptionChargesByUser'
 import Summaries from './Summaries'
 
-import { Icon } from '../designSystem'
+import { Icon, Tooltip } from '../designSystem'
 
 const { publisherRevenueApiUrl } = envGlobalVar()
 
@@ -183,6 +183,7 @@ export function MembershipUsersList({
 
     return {
       id,
+      shortId: id.substring(0, 3) + '...',
       customer: '-',
       totalAmount,
       interchangeFee: '-',
@@ -238,7 +239,11 @@ export function MembershipUsersList({
           <tbody>
             {membershipUsersData.map((item) => (
               <Tr key={item.id} onClick={() => setSelectedUser(item)}>
-                <Td>{item.id}</Td>
+                <Td>
+                  <Tooltip placement="top" title={item.id}>
+                    {item.shortId}
+                  </Tooltip>
+                </Td>
                 <Td>{item.customer}</Td>
                 <Td>{item.totalAmount}</Td>
                 <Td>{item.interchangeFee}</Td>
