@@ -58,7 +58,7 @@ const AddOnDetails = lazyLoad(
 // ----------- Routes -----------
 // Lists
 export const BILLABLE_METRICS_ROUTE = '/billable-metrics'
-export const SUBSCRIPTION_CHARGE_ROUTE = '/subscription-charges'
+export const RECEIVABLES_ROUTE = '/receivables'
 export const PLANS_ROUTE = '/plans'
 export const COUPONS_ROUTE = '/coupons'
 export const ADD_ONS_ROUTE = '/add-ons'
@@ -102,7 +102,7 @@ export const ADD_ON_DETAILS_ROUTE = '/add-on/:addOnId'
 
 export const objectListRoutes: CustomRouteObject[] = [
   {
-    path: [SUBSCRIPTION_CHARGE_ROUTE],
+    path: [RECEIVABLES_ROUTE],
     private: true,
     element: <SubscriptionChargesList />,
   },
