@@ -1,5 +1,5 @@
 import get from 'lodash/get'
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { envGlobalVar } from '~/core/apolloClient'
@@ -22,6 +22,7 @@ const { publisherRevenueApiUrl } = envGlobalVar()
 
 interface MembershipUsersListProps {
   selectedMembership: MembershipOrgView
+  setSelectedMembership: Dispatch<SetStateAction<MembershipOrgView | null>>
 }
 
 const Table = styled.table`
@@ -63,6 +64,12 @@ const Detail = styled.div`
   margin: 10px;
 `
 
+const Title = styled.h1`
+  font-size: 16px;
+  color: rgb(25, 33, 46);
+  margin: 0;
+`
+
 const FilterContainter = styled.button`
   background-color: white;
   display: flex;
@@ -72,10 +79,25 @@ const FilterContainter = styled.button`
   border-radius: 8px;
   border: 1px solid #e5e7eb;
 `
-const Title = styled.h1`
+const BreadcrumbContainer = styled.nav`
+  display: flex;
+  align-items: center;
+`
+
+const BreadcrumbItem = styled.span`
   font-size: 16px;
-  color: rgb(25, 33, 46);
-  margin: 0;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
+const Separator = styled.span`
+  margin: 0 8px;
+  font-weight: 600;
+  color: #666;
 `
 
 const Period = styled.p`
@@ -90,6 +112,19 @@ const NoTransaction = styled.div`
   color: #000000;
 `
 
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`
+
+const SearchBar = styled.input`
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`
+
 const summaryData = [
   { title: 'Total amount', value: '$220.00' },
   { title: 'Interchange fee', value: '$20.00' },
@@ -99,7 +134,10 @@ const summaryData = [
   { title: 'Unpaid amount', value: '$0.00' },
 ]
 
-export function MembershipUsersList({ selectedMembership }: MembershipUsersListProps) {
+export function MembershipUsersList({
+  selectedMembership,
+  setSelectedMembership,
+}: MembershipUsersListProps) {
   const [memUsers, setMemUsers] = useState<MembershipUser[]>([])
   const [selectedUser, setSelectedUser] = useState<MembershipUserView | null>(null)
   const [page, setPage] = useState<PaginationValue>({ currentPage: '0', totalItem: 0 })
@@ -158,9 +196,20 @@ export function MembershipUsersList({ selectedMembership }: MembershipUsersListP
     }
   })
 
+  const handleReturn = () => {
+    setSelectedMembership(null)
+  }
+
   if (!selectedUser) {
     return (
       <section>
+        <Header>
+          <BreadcrumbContainer>
+            <BreadcrumbItem onClick={handleReturn}>Receivables</BreadcrumbItem>
+            <Separator>&gt;</Separator>
+          </BreadcrumbContainer>
+          <SearchBar placeholder="Search..." />
+        </Header>
         <Title>{selectedMembership.org}</Title>
         <Period>Period 01/08/2023 - 31/08/2023</Period>
         <Summaries summaryData={summaryData} />
@@ -214,5 +263,12 @@ export function MembershipUsersList({ selectedMembership }: MembershipUsersListP
     )
   }
 
-  return <SubscriptionChargesByUser selectedUser={selectedUser} selectedMembership={selectedMembership}/>
+  return (
+    <SubscriptionChargesByUser
+      selectedUser={selectedUser}
+      setSelectedUser={setSelectedUser}
+      selectedMembership={selectedMembership}
+      setSelectedMembership={setSelectedMembership}
+    />
+  )
 }

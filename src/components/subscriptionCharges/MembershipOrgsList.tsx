@@ -88,6 +88,25 @@ const NoTransaction = styled.div`
   color: #000000;
 `
 
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`
+
+const Title = styled.h1`
+  font-size: 16px;
+  color: rgb(25, 33, 46);
+  margin: 0;
+`
+
+const SearchBar = styled.input`
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`
+
 export function MembershipOrgsList() {
   const [memberships, setMemberships] = useState<MembershipOrg[]>([])
   const [selectedMembership, setSelectedMembership] = useState<MembershipOrgView | null>(null)
@@ -147,6 +166,10 @@ export function MembershipOrgsList() {
   if (!selectedMembership) {
     return (
       <section>
+        <Header>
+          <Title>Receivables</Title>
+          <SearchBar placeholder="Search..." />
+        </Header>
         <Period>Period 01/08/2023 - 31/08/2023</Period>
         <Summaries summaryData={summaryData} />
         <DetailHeader>
@@ -199,5 +222,10 @@ export function MembershipOrgsList() {
     )
   }
 
-  return <MembershipUsersList selectedMembership={selectedMembership} />
+  return (
+    <MembershipUsersList
+      selectedMembership={selectedMembership}
+      setSelectedMembership={setSelectedMembership}
+    />
+  )
 }

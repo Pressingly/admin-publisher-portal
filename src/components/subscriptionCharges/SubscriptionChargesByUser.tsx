@@ -1,9 +1,10 @@
 import get from 'lodash/get'
 import { DateTime } from 'luxon'
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { envGlobalVar } from '~/core/apolloClient'
+import { ITEMS_PER_PAGE } from '~/core/constants/pagination'
 import { fetchSubChargesByUser } from '~/core/utils/request'
 
 import {
@@ -16,11 +17,12 @@ import PaginationFooter from './Pagination'
 import Summaries from './Summaries'
 
 import { Icon } from '../designSystem'
-import { ITEMS_PER_PAGE } from '~/core/constants/pagination'
 
 interface SubscriptionChargesByUserProps {
   selectedUser: MembershipUserView
   selectedMembership: MembershipOrgView
+  setSelectedUser: Dispatch<SetStateAction<MembershipUserView | null>>
+  setSelectedMembership: Dispatch<SetStateAction<MembershipOrgView | null>>
 }
 const { publisherRevenueApiUrl } = envGlobalVar()
 
@@ -79,6 +81,27 @@ const FilterContainter = styled.button`
   border: 1px solid #e5e7eb;
 `
 
+const BreadcrumbContainer = styled.nav`
+  display: flex;
+  align-items: center;
+`
+
+const BreadcrumbItem = styled.span`
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
+const Separator = styled.span`
+  margin: 0 8px;
+  font-weight: 600;
+  color: #666;
+`
+
 const Title = styled.h1`
   font-size: 16px;
   color: rgb(25, 33, 46);
@@ -94,6 +117,19 @@ const NoTransaction = styled.div`
   font-weight: 600;
   text-align: center;
   color: #000000;
+`
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`
+
+const SearchBar = styled.input`
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 `
 
 const summaryData = [
@@ -112,6 +148,8 @@ const currencyMap: Record<string, string> = {
 export function SubscriptionChargesByUser({
   selectedUser,
   selectedMembership,
+  setSelectedUser,
+  setSelectedMembership,
 }: SubscriptionChargesByUserProps) {
   const [subCharges, setSubCharges] = useState<SubscriptionCharge[]>([])
   const [page, setPage] = useState<PaginationValue>({ currentPage: '0', totalItem: 0 })
@@ -174,7 +212,14 @@ export function SubscriptionChargesByUser({
 
   return (
     <section>
-      <Title>{selectedUser.id}</Title>
+      <Header>
+        <BreadcrumbContainer>
+          <BreadcrumbItem onClick={() => setSelectedMembership(null)}>Receivables</BreadcrumbItem>
+          <Separator>&gt;</Separator>
+          <BreadcrumbItem onClick={() => setSelectedUser(null)}>{selectedMembership.org}</BreadcrumbItem>
+        </BreadcrumbContainer>
+        <SearchBar placeholder="Search..." />
+      </Header>
       <Period>Period 01/08/2023 - 31/08/2023</Period>
       <Summaries summaryData={summaryData} />
       <DetailHeader>

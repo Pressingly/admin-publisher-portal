@@ -9,32 +9,9 @@ const DashboardContainer = styled.div`
   color: #111928;
 `
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-`
-
-const Title = styled.h1`
-  font-size: 16px;
-  color: rgb(25, 33, 46);
-  margin: 0;
-`
-
-const SearchBar = styled.input`
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`
-
 const Receivables = () => {
   return (
     <DashboardContainer>
-      <Header>
-        <Title>Receivables</Title>
-        <SearchBar placeholder="Search..." />
-      </Header>
       <MembershipOrgsList />
     </DashboardContainer>
   )
