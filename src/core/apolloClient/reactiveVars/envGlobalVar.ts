@@ -6,6 +6,7 @@ interface EnvGlobal {
   appEnv: AppEnvEnum
   apiUrl: string
   lagoOauthProxyUrl: string
+  publisherRevenueApiUrl: string
   disableSignUp: boolean
   appVersion: string
   sentryDsn: string
@@ -14,6 +15,7 @@ interface EnvGlobal {
 export const envGlobalVar = makeVar<EnvGlobal>({
   appEnv: window.APP_ENV || APP_ENV,
   apiUrl: window.API_URL || API_URL,
+  publisherRevenueApiUrl: window.PUBLISHER_REVENUE_API_URL || PUBLISHER_REVENUE_API_URL,
   lagoOauthProxyUrl: window.LAGO_OAUTH_PROXY_URL || LAGO_OAUTH_PROXY_URL,
   disableSignUp: (window.LAGO_DISABLE_SIGNUP || LAGO_DISABLE_SIGNUP) === 'true',
   appVersion: APP_VERSION,

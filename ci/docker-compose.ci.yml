@@ -47,6 +47,7 @@ services:
     restart: unless-stopped
     environment:
       API_URL: http://localhost:3000
+      PUBLISHER_REVENUE_API: http://localhost:4002
       NODE_ENV: staging
     ports:
       - 80:80

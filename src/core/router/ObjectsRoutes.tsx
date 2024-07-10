@@ -6,6 +6,9 @@ import { lazyLoad } from './utils'
 const BillableMetricsList = lazyLoad(
   () => import(/* webpackChunkName: 'billable-metrics' */ '~/pages/BillableMetricsList'),
 )
+const Receivables = lazyLoad(
+  () => import(/* webpackChunkName: 'billable-metrics' */ '~/pages/Receivables'),
+)
 const PlansList = lazyLoad(() => import(/* webpackChunkName: 'plans-list' */ '~/pages/PlansList'))
 const CouponsList = lazyLoad(
   () => import(/* webpackChunkName: 'coupons-list' */ '~/pages/CouponsList'),
@@ -55,6 +58,7 @@ const AddOnDetails = lazyLoad(
 // ----------- Routes -----------
 // Lists
 export const BILLABLE_METRICS_ROUTE = '/billable-metrics'
+export const RECEIVABLES_ROUTE = '/receivables'
 export const PLANS_ROUTE = '/plans'
 export const COUPONS_ROUTE = '/coupons'
 export const ADD_ONS_ROUTE = '/add-ons'
@@ -97,6 +101,11 @@ export const CUSTOMER_SUBSCRIPTION_PLAN_DETAILS =
 export const ADD_ON_DETAILS_ROUTE = '/add-on/:addOnId'
 
 export const objectListRoutes: CustomRouteObject[] = [
+  {
+    path: [RECEIVABLES_ROUTE],
+    private: true,
+    element: <Receivables />,
+  },
   {
     path: [BILLABLE_METRICS_ROUTE],
     private: true,
